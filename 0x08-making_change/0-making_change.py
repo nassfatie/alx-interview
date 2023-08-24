@@ -1,38 +1,43 @@
 #!/usr/bin/python3
 """
-Defines function that determines the fewest number of coins to make change
+Making Change
 """
 
 
 def makeChange(coins, total):
     """
-    Determines the fewest number of coins needed to meet a given total
-
-    parameters:
-        coins [list or positive ints]:
-            the values of the coins in your possession
-            you can assume you have an infinite number of coins of all values
-        total [int]:
-            total amount of change to make
-            if total is 0 or less, return 0
-
-    returns:
-        the fewest number of coins to make the change
-        or -1 if the total change cannot be made with the given coins
+    Return the minimum number of coins needed to meet a given total
+    Args:
+        coins (list of ints): a list of coins of different values
+        total (int): total value to be met
+    Return:
+        Number of coins or -1 if meeting the total is not possible
     """
     if total <= 0:
         return 0
-    if len(coins) is 0:
+    if coins == [] or coins is None:
         return -1
-    coins = sorted(coins)
-    dynamic = [float('inf')] * (total + 1)
-    dynamic[0] = 0
-    for i in range(total + 1):
-        for coin in coins:
-            if coin > i:
-                break
-            if dynamic[i - coin] != -1:
-                dynamic[i] = min(dynamic[i - coin] + 1, dynamic[i])
-    if dynamic[total] == float('inf'):
+    try:
+        n = coins.index(total)
+        return 1
+    except ValueError:
+        pass
+
+    coins.sort(reverse=True)
+    coin_count = 0
+    for i in coins:
+        if total % i == 0:
+            coin_count += int(total / i)
+            return coin_count
+        if total - i >= 0:
+            if int(total / i) > 1:
+                coin_count += int(total / i)
+                total = total % i
+            else:
+                coin_count += 1
+                total -= i
+                if total == 0:
+                    break
+    if total > 0:
         return -1
-    return dynamic[total]
+    return coin_count
